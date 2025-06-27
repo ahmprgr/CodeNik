@@ -1,0 +1,38 @@
+const express = require("express");
+const helmet = require("helmet");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const cookieParser = require("cookie-parser");
+const authRouter = require("./modules/user/auth/userRouter");
+const { getMe } = require("./modules/user/auth/userController")
+require("dotenv").config();
+
+const app = express();
+
+//* middlewares
+app.use(cookieParser());
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 2,
+      httpOnly: true,
+      secure: false,
+    },
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_DB_URI,
+      ttl: 60 * 60 * 36,
+      autoRemove: "native",
+    }),
+  })
+);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(helmet());
+
+//* router
+app.use("/api/auth", authRouter);
+app.get("/api/user/me",getMe)
+module.exports = app;
