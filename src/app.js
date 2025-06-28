@@ -3,7 +3,7 @@ const helmet = require("helmet");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
-const authRouter = require("./modules/user/auth/userRouter");
+const authRouter = require("./modules/user/auth/userRouter.js");
 const { getMe } = require("./modules/user/auth/userController")
 require("dotenv").config();
 
@@ -17,7 +17,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 2,
+      maxAge: 1000 * 60 * 60 * 36,
       httpOnly: true,
       secure: false,
     },
@@ -28,7 +28,7 @@ app.use(
     }),
   })
 );
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(helmet());
 

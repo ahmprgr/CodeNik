@@ -1,5 +1,7 @@
 const userModel = require("./userModel");
 const bcrypt = require("bcrypt");
+const fs = require("fs");
+const path = require("path");
 
 exports.register = async (req, res) => {
   try {
@@ -91,21 +93,56 @@ exports.deleteAccount = async (req, res) => {
 };
 exports.editProfile = async (req, res) => {
   try {
-    const { fullname, password, email, profile, userid } = req.body;
-    const isDuplicatedEmail = await userModel.findOne({ email });
-    const isDuplicatedUserId = await userModel.findOne({ userid });
+    const user = await userModel.findById(req.session.user);
+    const { fullname, password, email, userid } = req.body;
+    const profile = req.file
+      ? `/uploads/profiles/${req.file.filename}`
+      : user.profile;
+
+    const isDuplicatedEmail = await userModel.findOne({
+      email,
+      _id: { $ne: user._id },
+    });
+
+    const isDuplicatedUserId = await userModel.findOne({
+      userid,
+      _id: { $ne: user._id },
+    });
+
     if (!isDuplicatedEmail && !isDuplicatedUserId) {
-      const newUserInfo = await userModel.updateOne({
-        $set: {
-          userid,
-          email,
-          fullname,
-          password,
-          profile,
-        },
-      });
+      if (req.file && user.profile) {
+        
+        const oldProfilePath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "..",
+          "public",
+          user.profile.startsWith("/") ? user.profile.slice(1) : user.profile
+        );
+        fs.unlink(oldProfilePath, (e) => {
+          if (e) console.log(e);
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+
+      const newUserInfo = await userModel.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            userid,
+            email,
+            fullname,
+            password: hashedPassword,
+            profile,
+          },
+        }
+      );
+
       return res.json({
-        message: "user updated successfuly",
+        message: "user updated successfully",
+        info: newUserInfo,
       });
     } else {
       return res.status(409).json({

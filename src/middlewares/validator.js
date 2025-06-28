@@ -6,9 +6,7 @@ const validator = (schema) => {
       });
       next();
     } catch (err) {
-
-      const errorDetails = err.message
-      return res.status(500).json({ message: errorDetails });
+      return res.status(500).json({ message: err.errors });
     }
   };
 };
