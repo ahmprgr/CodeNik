@@ -4,7 +4,9 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./modules/user/auth/userRouter.js");
-const { getMe } = require("./modules/user/auth/userController")
+const { getMe } = require("./modules/user/auth/userController");
+const isAdmin = require("./middlewares/isAdmin.js");
+const authGuard = require("./middlewares/authGuard.js");
 require("dotenv").config();
 
 const app = express();
@@ -34,5 +36,5 @@ app.use(helmet());
 
 //* router
 app.use("/api/auth", authRouter);
-app.get("/api/user/me",getMe)
+app.get("/api/user/me",authGuard,getMe)
 module.exports = app;

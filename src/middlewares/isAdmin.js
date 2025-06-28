@@ -5,6 +5,7 @@ const isAdmin = async (req, res, next) => {
     const userId = req.session.user;
     const user = await userModel.findOne({ _id: userId });
     if (user.role === "admin") {
+      req.user = user
       next();
     } else {
       return res.status(403).json({
