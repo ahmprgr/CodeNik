@@ -10,6 +10,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    cover:{
+      type: String,
+     required: true,
+    } ,
     slug: {
       type: String,
       required: true,
