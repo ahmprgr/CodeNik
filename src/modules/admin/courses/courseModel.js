@@ -24,9 +24,7 @@ const schema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["completing", "completed"],
-    },
-    lastupdate: {
-      type: String,
+      default:"completing",
     },
   },
   {
