@@ -26,7 +26,7 @@ output:
 success => 200: you've logged out successfuly
 
 5- /api/auth/editprofile/ PUT with authGuard
-data: body => fullname, userid, password, email, profile(image)
+data: body => fullname, userid, password, email, profile(image(multipart form data))
 output:
 success => 200: user updated successfuly
 if the userid or email exists in db => 409: you can't change your info with this input
@@ -36,3 +36,5 @@ getMe:
 data: none
 output:
 success => 200: userInfo
+
+course: 

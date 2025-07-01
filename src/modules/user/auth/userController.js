@@ -96,7 +96,7 @@ exports.editProfile = async (req, res) => {
     const user = await userModel.findById(req.session.user);
     const { fullname, password, email, userid } = req.body;
     const profile = req.file
-      ? `/uploads/profiles/${req.file.filename}`
+      ? `/uploads/img/${req.file.filename}`
       : user.profile;
 
     const isDuplicatedEmail = await userModel.findOne({
