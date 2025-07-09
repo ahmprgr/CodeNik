@@ -10,7 +10,7 @@ exports.addCourse = async (req, res) => {
         name,
         description,
         slug,
-        cover:cover.filename,
+        cover: `/uploads/img/${cover.filename}`,
         ...courseModel.status,
       });
       return res.status(201).json({
@@ -31,4 +31,16 @@ exports.addCourse = async (req, res) => {
 };
 exports.editCourse = async (req, res) => {};
 exports.deleteCourse = async (req, res) => {};
-exports.getCourse = async (req, res) => {};
+exports.getCourse = async (req, res) => {
+  try {
+    const courses = await courseModel.find({},{__v:0,updatedAt:0,createdAt:0,_id:0,status:0}).lean();
+    return res.json({
+      courses,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      message: "internal server error3115",
+      error: e.errors,
+    });
+  }
+};
