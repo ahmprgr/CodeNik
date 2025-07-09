@@ -16,11 +16,9 @@ exports.register = async (req, res) => {
           email,
           password: hashedPassword,
           ...userModel.userid,
-          role: userCount > 2 ? "user" : "admin",
+          role: userCount >= 2 ? "user" : "admin",
         });
         req.session.user = user._id;
-        console.log(req.session.user);
-
         const userObj = user.toObject();
         Reflect.deleteProperty(userObj, "password");
         return res.status(201).json({

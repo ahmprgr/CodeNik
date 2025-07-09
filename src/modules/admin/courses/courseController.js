@@ -10,7 +10,7 @@ exports.addCourse = async (req, res) => {
         name,
         description,
         slug,
-        cover,
+        cover:cover.filename,
         ...courseModel.status,
       });
       return res.status(201).json({
@@ -24,7 +24,7 @@ exports.addCourse = async (req, res) => {
     }
   } catch (e) {
     return res.status(500).json({
-      message: "internal server error",
+      message: "internal server error3115",
       error: e.errors,
     });
   }

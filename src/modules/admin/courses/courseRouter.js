@@ -17,8 +17,8 @@ router.post(
   "/addCourse",
   authGuard,
   isAdmin,
-  validator(courseValidationSchema),
   imgUploader.single("cover"),
+  validator(courseValidationSchema),
   addCourse
 );
 router.put("/editCourse", authGuard, isAdmin, editCourse);

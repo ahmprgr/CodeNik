@@ -37,7 +37,7 @@ app.use(helmet());
 
 //* router
 app.use("/api/auth", authRouter);
-app.use("/api/admin",router)
+app.use("/api/admin",courseRouter)
 app.get("/api/user/me",authGuard,getMe)
 
 module.exports = app;
