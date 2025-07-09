@@ -8,6 +8,7 @@ const { getMe } = require("./modules/user/auth/userController");
 const isAdmin = require("./middlewares/isAdmin.js");
 const authGuard = require("./middlewares/authGuard.js");
 const courseRouter = require("./modules/admin/courses/courseRouter.js");
+const courseController = require("./modules/admin/courses/courseController.js");
 require("dotenv").config();
 
 const app = express();
@@ -39,5 +40,7 @@ app.use(helmet());
 app.use("/api/auth", authRouter);
 app.use("/api/admin",courseRouter)
 app.get("/api/user/me",authGuard,getMe)
+app.get("/api/courses/:slug",courseController.getOneCourse)
+app.get("/api/courses",courseController.getCourse)
 
 module.exports = app;

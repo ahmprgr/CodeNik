@@ -24,7 +24,7 @@ exports.addCourse = async (req, res) => {
     }
   } catch (e) {
     return res.status(500).json({
-      message: "internal server error3115",
+      message: "internal server error",
       error: e.errors,
     });
   }
@@ -33,13 +33,38 @@ exports.editCourse = async (req, res) => {};
 exports.deleteCourse = async (req, res) => {};
 exports.getCourse = async (req, res) => {
   try {
-    const courses = await courseModel.find({},{__v:0,updatedAt:0,createdAt:0,_id:0,status:0}).lean();
+    const courses = await courseModel
+      .find({}, { __v: 0, updatedAt: 0, createdAt: 0, _id: 0, status: 0 })
+      .lean();
     return res.json({
       courses,
     });
   } catch (e) {
     return res.status(500).json({
-      message: "internal server error3115",
+      message: "internal server error",
+      error: e.errors,
+    });
+  }
+};
+exports.getOneCourse = async (req, res) => {
+  try {
+    const slug = req.params.slug;
+    const searchedCourse = await courseModel.findOne(
+      { slug },
+      { updatedAt: 0, createdAt: 0, _id: 0, status: 0, __v: 0 }
+    );
+    if (searchedCourse) {
+      return res.json({
+        searchedCourse,
+      });
+    } else {
+      return res.status(404).json({
+        message: "course not found",
+      });
+    }
+  } catch (e) {
+    return res.status(500).json({
+      message: "internal server error",
       error: e.errors,
     });
   }

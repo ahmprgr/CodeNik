@@ -22,7 +22,6 @@ router.post(
   addCourse
 );
 router.put("/editCourse", authGuard, isAdmin, editCourse);
-router.get("/getCourse", getCourse);
 router.delete("/deleteCourse", authGuard, isAdmin, deleteCourse);
 
 module.exports = router;
