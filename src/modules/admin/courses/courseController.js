@@ -1,7 +1,11 @@
 const courseModel = require("./courseModel");
+const fs = require("fs");
+const userModel = require("./../../user/auth/userModel");
+const path = require("path");
 
 exports.addCourse = async (req, res) => {
   try {
+    const user = await userModel.findOne({ _id: req.session.user });
     const { name, description, slug } = req.body;
     const cover = req.file;
     const isDuplicatedSlug = await courseModel.findOne({ slug });
@@ -11,6 +15,7 @@ exports.addCourse = async (req, res) => {
         description,
         slug,
         cover: `/uploads/img/${cover.filename}`,
+        author: user.userid,
         ...courseModel.status,
       });
       return res.status(201).json({
@@ -29,13 +34,59 @@ exports.addCourse = async (req, res) => {
     });
   }
 };
-exports.editCourse = async (req, res) => {};
+exports.editCourse = async (req, res) => {
+  try {
+    const { slug, name, description, status } = req.body;
+    const id = req.query.id;
+    const course = await courseModel.findOne({ _id: id });
+    const cover = req.file ? `/uploads/img/${req.file.filename}` : course.cover;
+    const isDuplicatedSlug = await courseModel.findOne({
+      slug,
+      _id: { $ne: course._id },
+    });
+    if (!isDuplicatedSlug) {
+      const oldProfilePath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "public",
+        course.cover.startsWith("/") ? course.cover.slice(1) : course.cover
+      );
+      fs.unlink(oldProfilePath, (e) => {
+        if (e) console.log(e);
+      });
+      await courseModel.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: {
+            slug,
+            name,
+            description,
+            cover,
+            status,
+          },
+        }
+      );
+      return res.json({
+        message: "The course updated",
+      });
+    } else {
+      return res.json({
+        message: "your slug already exists",
+      });
+    }
+  } catch (e) {
+    return res.status(500).json({
+      message: "internal server error",
+      error: e.errors,
+    });
+  }
+};
 exports.deleteCourse = async (req, res) => {};
 exports.getCourse = async (req, res) => {
   try {
-    const courses = await courseModel
-      .find({}, { __v: 0, updatedAt: 0, createdAt: 0, _id: 0, status: 0 })
-      .lean();
+    const courses = await courseModel.find({}).lean();
     return res.json({
       courses,
     });
@@ -65,7 +116,7 @@ exports.getOneCourse = async (req, res) => {
   } catch (e) {
     return res.status(500).json({
       message: "internal server error",
-      error: e.errors,
+      error: e.message,
     });
   }
 };

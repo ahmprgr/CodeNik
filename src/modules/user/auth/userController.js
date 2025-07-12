@@ -48,7 +48,6 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email });
     const comparePassword = await bcrypt.compare(password, user.password);
-
     if (user && comparePassword) {
       req.session.user = user._id;
       console.log(req.session.user);
@@ -99,7 +98,7 @@ exports.editProfile = async (req, res) => {
 
     const isDuplicatedEmail = await userModel.findOne({
       email,
-      _id: { $ne: user._id },
+      _id: { $ne: user._id }
     });
 
     const isDuplicatedUserId = await userModel.findOne({
@@ -109,7 +108,6 @@ exports.editProfile = async (req, res) => {
 
     if (!isDuplicatedEmail && !isDuplicatedUserId) {
       if (req.file && user.profile) {
-        
         const oldProfilePath = path.join(
           __dirname,
           "..",

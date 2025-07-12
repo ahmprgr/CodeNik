@@ -21,7 +21,13 @@ router.post(
   validator(courseValidationSchema),
   addCourse
 );
-router.put("/editCourse", authGuard, isAdmin, editCourse);
+router.put(
+  "/editCourse",
+  authGuard,
+  isAdmin,
+  imgUploader.single("cover"),
+  editCourse
+);
 router.delete("/deleteCourse", authGuard, isAdmin, deleteCourse);
 
 module.exports = router;

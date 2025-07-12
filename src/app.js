@@ -4,7 +4,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./modules/user/auth/userRouter.js");
-const { getMe } = require("./modules/user/auth/userController");
+const userController = require("./modules/user/auth/userController");
 const isAdmin = require("./middlewares/isAdmin.js");
 const authGuard = require("./middlewares/authGuard.js");
 const courseRouter = require("./modules/admin/courses/courseRouter.js");
@@ -39,7 +39,7 @@ app.use(helmet());
 //* router
 app.use("/api/auth", authRouter);
 app.use("/api/admin",courseRouter)
-app.get("/api/user/me",authGuard,getMe)
+app.get("/api/user/me",authGuard,userController.getMe)
 app.get("/api/courses/:slug",courseController.getOneCourse)
 app.get("/api/courses",courseController.getCourse)
 
