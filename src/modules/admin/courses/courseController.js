@@ -83,7 +83,27 @@ exports.editCourse = async (req, res) => {
     });
   }
 };
-exports.deleteCourse = async (req, res) => {};
+exports.deleteCourse = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const course = await courseModel.findOne({ _id: id });
+    if (course) {
+      const deletingCourse = await courseModel.findOneAndDelete({ _id: id });
+      return res.json({
+        message: "This course deleted successfuly",
+      });
+    } else {
+      return res.status(404).json({
+        message: "This course with this object id not found",
+      });
+    }
+  } catch (e) {
+    return res.status(500).json({
+      message: "internal serever error",
+      error: e.errors,
+    });
+  }
+};
 exports.getCourse = async (req, res) => {
   try {
     const courses = await courseModel.find({}).lean();
